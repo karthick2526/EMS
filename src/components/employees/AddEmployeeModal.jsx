@@ -42,7 +42,7 @@ const departmentPositions = {
   ],
 };
 
-function AddEmployeeModal({ employees, onClose, onEmployeeAdded }) {
+function AddEmployeeModal({ employees = [], onClose, onEmployeeAdded }) {
   const [formData, setFormData] = useState({
     employeeId: "",
     name: "",
@@ -58,11 +58,23 @@ function AddEmployeeModal({ employees, onClose, onEmployeeAdded }) {
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
 
-  /* =========================
+  /* =========================================================
+     LOCK BACKGROUND SCROLL WHEN MODAL IS OPEN
+  ========================================================= */
+
+  useEffect(() => {
+    const originalOverflow = document.body.style.overflow;
+
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
+  }, []);
+
+  /* =========================================================
      GENERATE EMPLOYEE ID
-     - Reuse deleted IDs first
-     - Otherwise continue with next ID
-  ========================= */
+  ========================================================= */
 
   const generateEmployeeId = () => {
     if (!employees || employees.length === 0) {
@@ -95,22 +107,20 @@ function AddEmployeeModal({ employees, onClose, onEmployeeAdded }) {
     }));
   }, [employees]);
 
-  /* =========================
+  /* =========================================================
      POSITION OPTIONS
-  ========================= */
+  ========================================================= */
 
   const positionOptions = useMemo(() => {
     return departmentPositions[formData.department] || [];
   }, [formData.department]);
 
-  /* =========================
+  /* =========================================================
      INPUT CHANGE
-  ========================= */
+  ========================================================= */
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-
-    /* Phone - numbers only */
 
     if (name === "phone") {
       if (!/^\d*$/.test(value)) {
@@ -122,22 +132,13 @@ function AddEmployeeModal({ employees, onClose, onEmployeeAdded }) {
       }
     }
 
-    /* Email local part */
-
     if (name === "email") {
-      if (value.includes("@")) {
-        const localPart = value.split("@")[0];
+      const localPart = value.split("@")[0];
 
-        setFormData((prev) => ({
-          ...prev,
-          email: localPart,
-        }));
-      } else {
-        setFormData((prev) => ({
-          ...prev,
-          email: value,
-        }));
-      }
+      setFormData((prev) => ({
+        ...prev,
+        email: localPart,
+      }));
 
       setErrors((prev) => ({
         ...prev,
@@ -146,8 +147,6 @@ function AddEmployeeModal({ employees, onClose, onEmployeeAdded }) {
 
       return;
     }
-
-    /* Department */
 
     if (name === "department") {
       setFormData((prev) => ({
@@ -176,9 +175,9 @@ function AddEmployeeModal({ employees, onClose, onEmployeeAdded }) {
     }));
   };
 
-  /* =========================
+  /* =========================================================
      VALIDATION
-  ========================= */
+  ========================================================= */
 
   const validateForm = () => {
     const newErrors = {};
@@ -232,12 +231,16 @@ function AddEmployeeModal({ employees, onClose, onEmployeeAdded }) {
     return Object.keys(newErrors).length === 0;
   };
 
-  /* =========================
-     SUBMIT - POST TO MOCKAPI
-  ========================= */
+  /* =========================================================
+     SUBMIT
+  ========================================================= */
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (saving) {
+      return;
+    }
 
     if (!validateForm()) {
       return;
@@ -248,13 +251,9 @@ function AddEmployeeModal({ employees, onClose, onEmployeeAdded }) {
 
       const finalEmail = `${formData.email}@company.com`;
 
-      /* =========================
-         MOCKAPI POST REQUEST
-      ========================= */
-
       const response = await api.post("/employees", {
         employeeId: formData.employeeId,
-        name: formData.name,
+        name: formData.name.trim(),
         email: finalEmail,
         phone: formData.phone,
         department: formData.department,
@@ -266,11 +265,7 @@ function AddEmployeeModal({ employees, onClose, onEmployeeAdded }) {
 
       console.log("Employee created in MockAPI:", response.data);
 
-      /* Send newly created employee to parent */
-
       onEmployeeAdded(response.data);
-
-      /* Success popup */
 
       window.dispatchEvent(
         new CustomEvent("employee-added", {
@@ -279,6 +274,8 @@ function AddEmployeeModal({ employees, onClose, onEmployeeAdded }) {
           },
         }),
       );
+
+      onClose();
     } catch (error) {
       console.error(
         "Failed to add employee:",
@@ -293,24 +290,58 @@ function AddEmployeeModal({ employees, onClose, onEmployeeAdded }) {
     }
   };
 
+  /* =========================================================
+     CLOSE
+  ========================================================= */
+
+  const handleClose = () => {
+    if (saving) {
+      return;
+    }
+
+    onClose();
+  };
+
   return (
-    <div className="modal-overlay">
-      <div className="employee-modal">
-        {/* Header */}
+    <div
+      className="modal-overlay"
+      role="dialog"
+      aria-modal="true"
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) {
+          handleClose();
+        }
+      }}
+    >
+      <div className="employee-modal" onMouseDown={(e) => e.stopPropagation()}>
+        {/* =====================================================
+            HEADER
+        ===================================================== */}
 
         <div className="modal-header">
-          <div>
+          <div className="modal-title-area">
             <h2>Add Employee</h2>
 
             <p>Add a new employee to your organization.</p>
           </div>
 
-          <button type="button" className="modal-close-btn" onClick={onClose}>
-            <X size={20} />
+          {/* CLOSE BUTTON */}
+
+          <button
+            type="button"
+            className="modal-close-btn"
+            onClick={handleClose}
+            disabled={saving}
+            aria-label="Close modal"
+            title="Close"
+          >
+            <X size={20} strokeWidth={2.2} />
           </button>
         </div>
 
-        {/* Form */}
+        {/* =====================================================
+            FORM
+        ===================================================== */}
 
         <form className="employee-form" onSubmit={handleSubmit}>
           <div className="form-grid">
@@ -344,6 +375,7 @@ function AddEmployeeModal({ employees, onClose, onEmployeeAdded }) {
                 placeholder="Enter full name"
                 value={formData.name}
                 onChange={handleInputChange}
+                disabled={saving}
               />
 
               {errors.name && (
@@ -365,6 +397,7 @@ function AddEmployeeModal({ employees, onClose, onEmployeeAdded }) {
                   placeholder="arun"
                   value={formData.email}
                   onChange={handleInputChange}
+                  disabled={saving}
                 />
 
                 <span>@company.com</span>
@@ -389,6 +422,7 @@ function AddEmployeeModal({ employees, onClose, onEmployeeAdded }) {
                 maxLength="10"
                 value={formData.phone}
                 onChange={handleInputChange}
+                disabled={saving}
               />
 
               {errors.phone && (
@@ -407,6 +441,7 @@ function AddEmployeeModal({ employees, onClose, onEmployeeAdded }) {
                 name="department"
                 value={formData.department}
                 onChange={handleInputChange}
+                disabled={saving}
               >
                 <option value="">Select department</option>
 
@@ -433,7 +468,7 @@ function AddEmployeeModal({ employees, onClose, onEmployeeAdded }) {
                 name="position"
                 value={formData.position}
                 onChange={handleInputChange}
-                disabled={!formData.department}
+                disabled={!formData.department || saving}
               >
                 <option value="">
                   {formData.department
@@ -465,6 +500,7 @@ function AddEmployeeModal({ employees, onClose, onEmployeeAdded }) {
                 name="joiningDate"
                 value={formData.joiningDate}
                 onChange={handleInputChange}
+                disabled={saving}
               />
 
               {errors.joiningDate && (
@@ -484,6 +520,7 @@ function AddEmployeeModal({ employees, onClose, onEmployeeAdded }) {
                 min="0"
                 value={formData.salary}
                 onChange={handleInputChange}
+                disabled={saving}
               />
 
               {errors.salary && (
@@ -500,6 +537,7 @@ function AddEmployeeModal({ employees, onClose, onEmployeeAdded }) {
                 name="status"
                 value={formData.status}
                 onChange={handleInputChange}
+                disabled={saving}
               >
                 <option value="Active">Active</option>
                 <option value="Inactive">Inactive</option>
@@ -517,7 +555,7 @@ function AddEmployeeModal({ employees, onClose, onEmployeeAdded }) {
             <button
               type="button"
               className="cancel-btn"
-              onClick={onClose}
+              onClick={handleClose}
               disabled={saving}
             >
               Cancel

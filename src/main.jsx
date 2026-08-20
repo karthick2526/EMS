@@ -3,11 +3,20 @@ import { createRoot } from "react-dom/client";
 
 import "./index.css";
 import App from "./App.jsx";
+
 import { AuthProvider } from "./context/AuthContext.jsx";
+import { Toaster } from "react-hot-toast";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <AuthProvider>
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 2500,
+        }}
+      />
+
       <App />
     </AuthProvider>
   </StrictMode>,

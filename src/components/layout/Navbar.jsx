@@ -1,4 +1,12 @@
-import { Bell, Search, Menu, LogOut, ChevronDown } from "lucide-react";
+import {
+  Menu,
+  ChevronDown,
+  UserRound,
+  LogOut,
+  CircleUserRound,
+} from "lucide-react";
+
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "../../context/AuthContext";
@@ -10,7 +18,69 @@ function Navbar({ onMenuClick }) {
 
   const { user, logout } = useAuth();
 
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+
+  const profileRef = useRef(null);
+
+  /* =========================================================
+     DYNAMIC USER DATA
+  ========================================================= */
+
+  const displayName = user?.name || "Administrator";
+
+  const displayRole = user?.role || "Admin";
+
+  const initials = displayName
+    .trim()
+    .split(/\s+/)
+    .map((word) => word.charAt(0))
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+
+  /* =========================================================
+     CLOSE DROPDOWN WHEN CLICKING OUTSIDE
+  ========================================================= */
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setShowProfileMenu(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  /* =========================================================
+     PROFILE CLICK
+  ========================================================= */
+
+  const handleProfileClick = () => {
+    setShowProfileMenu((prev) => !prev);
+  };
+
+  /* =========================================================
+     MY PROFILE
+  ========================================================= */
+
+  const handleMyProfile = () => {
+    setShowProfileMenu(false);
+
+    navigate("/profile");
+  };
+
+  /* =========================================================
+     LOGOUT
+  ========================================================= */
+
   const handleLogout = () => {
+    setShowProfileMenu(false);
+
     logout();
 
     navigate("/login", {
@@ -20,11 +90,13 @@ function Navbar({ onMenuClick }) {
 
   return (
     <header className="navbar">
-      {/* =================================
+      {/* =====================================================
           LEFT
-      ================================= */}
+      ===================================================== */}
 
       <div className="navbar-left">
+        {/* MOBILE MENU */}
+
         <button
           type="button"
           className="navbar-menu-btn"
@@ -34,79 +106,116 @@ function Navbar({ onMenuClick }) {
           <Menu size={20} />
         </button>
 
-        <div className="navbar-search">
-          <Search className="search-icon" size={18} />
+        {/* PAGE BRAND */}
 
-          <input
-            type="text"
-            placeholder="Search employees..."
-            aria-label="Search"
-          />
+        <div className="navbar-page-title">
+          <span className="navbar-title-dot" />
 
-          <span className="search-shortcut">Ctrl K</span>
+          <div>
+            <strong>Employee Management System</strong>
+            <span>Administration Panel</span>
+          </div>
         </div>
       </div>
 
-      {/* =================================
+      {/* =====================================================
           RIGHT
-      ================================= */}
+      ===================================================== */}
 
       <div className="navbar-right">
-        {/* STATUS */}
+        {/* SYSTEM STATUS */}
 
         <div className="navbar-status">
-          <span className="navbar-status-dot"></span>
+          <span className="navbar-status-dot" />
           <span>System Online</span>
         </div>
 
-        {/* NOTIFICATION */}
+        <div className="navbar-divider" />
 
-        <button
-          type="button"
-          className="notification-btn"
-          aria-label="Notifications"
-          title="Notifications"
-        >
-          <Bell size={19} />
+        {/* ===================================================
+            PROFILE
+        =================================================== */}
 
-          <span className="notification-dot"></span>
-        </button>
+        <div className="navbar-profile-wrapper" ref={profileRef}>
+          <button
+            type="button"
+            className={`navbar-profile ${
+              showProfileMenu ? "profile-open" : ""
+            }`}
+            onClick={handleProfileClick}
+            aria-label="Open profile menu"
+            aria-expanded={showProfileMenu}
+          >
+            {/* AVATAR */}
 
-        <div className="navbar-divider"></div>
+            <div className="navbar-avatar">{initials || "A"}</div>
 
-        {/* PROFILE */}
+            {/* USER INFO */}
 
-        <button
-          type="button"
-          className="navbar-profile"
-          aria-label="User profile"
-        >
-          <div className="navbar-avatar">
-            {user?.name?.charAt(0).toUpperCase() || "A"}
-          </div>
+            <div className="navbar-user-info">
+              <strong>{displayName}</strong>
 
-          <div className="navbar-user-info">
-            <strong>{user?.name || "Admin"}</strong>
+              <small>{displayRole}</small>
+            </div>
 
-            <small>{user?.role || "Administrator"}</small>
-          </div>
+            <ChevronDown
+              className={`profile-chevron ${
+                showProfileMenu ? "chevron-open" : ""
+              }`}
+              size={16}
+            />
+          </button>
 
-          <ChevronDown className="profile-chevron" size={15} />
-        </button>
+          {/* =================================================
+              PROFILE DROPDOWN
+          ================================================= */}
 
-        {/* LOGOUT */}
+          {showProfileMenu && (
+            <div className="profile-dropdown">
+              {/* DROPDOWN USER */}
 
-        <button
-          type="button"
-          className="navbar-logout"
-          onClick={handleLogout}
-          title="Logout"
-          aria-label="Logout"
-        >
-          <LogOut size={17} />
+              <div className="dropdown-user">
+                <div className="dropdown-avatar">{initials || "A"}</div>
 
-          <span>Logout</span>
-        </button>
+                <div className="dropdown-user-info">
+                  <strong>{displayName}</strong>
+
+                  <span>{displayRole}</span>
+                </div>
+              </div>
+
+              <div className="dropdown-divider" />
+
+              {/* MY PROFILE */}
+
+              <button
+                type="button"
+                className="profile-dropdown-item"
+                onClick={handleMyProfile}
+              >
+                <span className="dropdown-item-icon">
+                  <UserRound size={17} />
+                </span>
+
+                <span>My Profile</span>
+              </button>
+
+              {/* LOGOUT */}
+
+              <button
+                type="button"
+                className="profile-dropdown-item logout-item"
+                onClick={handleLogout}
+              >
+                <span className="dropdown-item-icon">
+                  <LogOut size={17} />
+                </span>
+
+                <span>Logout</span>
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </header>
   );

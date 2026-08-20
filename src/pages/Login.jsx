@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+
 import {
   Eye,
   EyeOff,
@@ -10,8 +11,13 @@ import {
   ShieldCheck,
   UserRound,
   ArrowRight,
+  KeyRound,
+  Sparkles,
 } from "lucide-react";
+
 import { useNavigate } from "react-router-dom";
+
+import { toast } from "react-hot-toast";
 
 import api from "../api/api";
 import { useAuth } from "../context/AuthContext";
@@ -19,6 +25,7 @@ import "./Login.css";
 
 function Login() {
   const navigate = useNavigate();
+
   const { login, isAuthenticated } = useAuth();
 
   const [formData, setFormData] = useState({
@@ -28,30 +35,57 @@ function Login() {
 
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-
   const [errors, setErrors] = useState({});
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   const [showForgotModal, setShowForgotModal] = useState(false);
   const [forgotEmail, setForgotEmail] = useState("");
-  const [forgotMessage, setForgotMessage] = useState("");
+  const [forgotLoading, setForgotLoading] = useState(false);
 
   const [showSuccess, setShowSuccess] = useState(false);
 
-  /* =========================
-     DEMO ADMIN CREDENTIALS
-  ========================= */
+  /* =========================================================
+     DEFAULT ADMIN
+  ========================================================= */
 
   const ADMIN_USERNAME = "admin";
-  const ADMIN_PASSWORD = "Admin@123";
+  const DEFAULT_ADMIN_PASSWORD = "Admin@123";
+  const DEFAULT_ADMIN_EMAIL = "admin@ems.com";
 
-  /* =========================
-     REDIRECT IF ALREADY LOGIN
-  ========================= */
+  /* =========================================================
+     GET DYNAMIC ADMIN DETAILS
+  ========================================================= */
+
+  const getSavedAdmin = () => {
+    try {
+      const savedUser = localStorage.getItem("ems-user");
+
+      return savedUser ? JSON.parse(savedUser) : null;
+    } catch (error) {
+      console.error("Unable to read saved admin:", error);
+
+      return null;
+    }
+  };
+
+  const savedAdmin = getSavedAdmin();
+
+  const adminEmail =
+    savedAdmin?.email?.trim().toLowerCase() || DEFAULT_ADMIN_EMAIL;
+
+  const currentAdminPassword =
+    localStorage.getItem("ems-admin-password") || DEFAULT_ADMIN_PASSWORD;
+
+  /* =========================================================
+     REDIRECT
+  ========================================================= */
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate("/", { replace: true });
+      navigate("/", {
+        replace: true,
+      });
+
       return;
     }
 
@@ -67,9 +101,9 @@ function Login() {
     }
   }, [isAuthenticated, navigate]);
 
-  /* =========================
-     INPUT CHANGE
-  ========================= */
+  /* =========================================================
+     INPUT
+  ========================================================= */
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -86,9 +120,9 @@ function Login() {
     }));
   };
 
-  /* =========================
+  /* =========================================================
      VALIDATION
-  ========================= */
+  ========================================================= */
 
   const validateForm = () => {
     const newErrors = {};
@@ -108,14 +142,14 @@ function Login() {
     return Object.keys(newErrors).length === 0;
   };
 
-  /* =========================
+  /* =========================================================
      LOGIN
-  ========================= */
+  ========================================================= */
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!validateForm()) {
+    if (!validateForm() || isLoggingIn) {
       return;
     }
 
@@ -124,29 +158,37 @@ function Login() {
 
     try {
       const username = formData.username.trim().toLowerCase();
+
       const password = formData.password;
 
       let loggedInUser = null;
 
-      /* =========================
-         DEMO ADMIN LOGIN
-      ========================= */
+      /* =====================================================
+         ADMIN LOGIN
+      ===================================================== */
 
-      if (
-        username === ADMIN_USERNAME.toLowerCase() &&
-        password === ADMIN_PASSWORD
-      ) {
-        loggedInUser = {
-          id: "admin-001",
-          name: "Administrator",
-          email: "admin@ems.com",
-          role: "Admin",
-        };
-      } else {
-        /* =========================
-           API USER LOGIN
-        ========================= */
+      if (username === ADMIN_USERNAME) {
+        const latestPassword =
+          localStorage.getItem("ems-admin-password") || DEFAULT_ADMIN_PASSWORD;
 
+        if (password === latestPassword) {
+          const latestAdmin = getSavedAdmin();
+
+          loggedInUser = {
+            id: latestAdmin?.id || "admin-001",
+            name: latestAdmin?.name || "Administrator",
+            email: latestAdmin?.email || DEFAULT_ADMIN_EMAIL,
+            role: latestAdmin?.role || "Admin",
+            password: latestPassword,
+          };
+        }
+      }
+
+      /* =====================================================
+         MOCKAPI USER LOGIN
+      ===================================================== */
+
+      if (!loggedInUser) {
         try {
           const response = await api.get("/users");
 
@@ -155,9 +197,10 @@ function Login() {
           loggedInUser = users.find((item) => {
             const itemEmail = item?.email?.trim().toLowerCase();
 
+            const itemUsername = item?.username?.trim().toLowerCase();
+
             return (
-              (itemEmail === username ||
-                item?.username?.trim().toLowerCase() === username) &&
+              (itemEmail === username || itemUsername === username) &&
               item?.password === password
             );
           });
@@ -166,9 +209,9 @@ function Login() {
         }
       }
 
-      /* =========================
+      /* =====================================================
          INVALID LOGIN
-      ========================= */
+      ===================================================== */
 
       if (!loggedInUser) {
         setErrors({
@@ -176,23 +219,25 @@ function Login() {
         });
 
         setIsLoggingIn(false);
+
         return;
       }
 
-      /* =========================
-         AUTH CONTEXT LOGIN
-      ========================= */
+      /* =====================================================
+         SAVE AUTH
+      ===================================================== */
 
       login({
         id: loggedInUser.id,
         name: loggedInUser.name || "Administrator",
-        email: loggedInUser.email || "admin@ems.com",
+        email: loggedInUser.email || DEFAULT_ADMIN_EMAIL,
         role: loggedInUser.role || "Admin",
+        password: loggedInUser.password || password,
       });
 
-      /* =========================
+      /* =====================================================
          REMEMBER ME
-      ========================= */
+      ===================================================== */
 
       if (rememberMe) {
         localStorage.setItem("ems-remember-username", username);
@@ -200,14 +245,16 @@ function Login() {
         localStorage.removeItem("ems-remember-username");
       }
 
-      /* =========================
+      /* =====================================================
          SUCCESS
-      ========================= */
+      ===================================================== */
 
       setShowSuccess(true);
 
       setTimeout(() => {
-        navigate("/", { replace: true });
+        navigate("/", {
+          replace: true,
+        });
       }, 1300);
     } catch (error) {
       console.error("Login error:", error);
@@ -220,68 +267,131 @@ function Login() {
     }
   };
 
-  /* =========================
+  /* =========================================================
      FORGOT PASSWORD
-  ========================= */
+  ========================================================= */
 
   const handleForgotPassword = async (event) => {
     event.preventDefault();
 
-    if (!forgotEmail.trim()) {
-      setForgotMessage("Please enter your email address.");
+    const email = forgotEmail.trim().toLowerCase();
+
+    if (!email) {
+      toast.error("Please enter your email address.");
+
       return;
     }
 
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(forgotEmail)) {
-      setForgotMessage("Please enter a valid email address.");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      toast.error("Please enter a valid email address.");
+
       return;
     }
 
-    setForgotMessage(
-      "If this email is registered, password reset instructions will be sent.",
-    );
+    setForgotLoading(true);
+
+    try {
+      /* =====================================================
+         CHECK ADMIN REGISTERED EMAIL
+      ===================================================== */
+
+      const latestAdmin = getSavedAdmin();
+
+      const registeredAdminEmail =
+        latestAdmin?.email?.trim().toLowerCase() || DEFAULT_ADMIN_EMAIL;
+
+      if (email === registeredAdminEmail) {
+        toast.success("Password reset instructions sent successfully!");
+
+        setForgotEmail("");
+
+        setTimeout(() => {
+          setShowForgotModal(false);
+        }, 800);
+
+        return;
+      }
+
+      /* =====================================================
+         CHECK MOCKAPI USERS
+      ===================================================== */
+
+      try {
+        const response = await api.get("/users");
+
+        const users = Array.isArray(response.data) ? response.data : [];
+
+        const registeredUser = users.find(
+          (user) => user?.email?.trim().toLowerCase() === email,
+        );
+
+        if (registeredUser) {
+          toast.success("Password reset instructions sent successfully!");
+
+          setForgotEmail("");
+
+          setTimeout(() => {
+            setShowForgotModal(false);
+          }, 800);
+
+          return;
+        }
+      } catch (apiError) {
+        console.error("Forgot password API error:", apiError);
+      }
+
+      toast.error("This email is not registered.");
+    } finally {
+      setForgotLoading(false);
+    }
   };
 
+  /* =========================================================
+     CLOSE FORGOT
+  ========================================================= */
+
   const closeForgotModal = () => {
+    if (forgotLoading) {
+      return;
+    }
+
     setShowForgotModal(false);
     setForgotEmail("");
-    setForgotMessage("");
   };
 
   return (
     <div className="login-page">
-      {/* =========================
-          BACKGROUND
-      ========================= */}
-
       <div className="login-grid" />
 
       <div className="login-orb login-orb-one" />
       <div className="login-orb login-orb-two" />
       <div className="login-orb login-orb-three" />
 
-      {/* =========================
-          MAIN
-      ========================= */}
-
       <main className="login-section">
         <div className="login-shell">
-          {/* =========================
-              LEFT BRAND PANEL
-          ========================= */}
+          {/* =================================================
+              BRAND PANEL
+          ================================================= */}
 
           <section className="login-brand-panel">
             <div className="brand-content">
-              <div className="brand-logo">
-                <span>E</span>
-              </div>
+              <div className="brand-top">
+                <div className="brand-logo">
+                  <span>E</span>
+                </div>
 
-              <div className="brand-name">
-                <strong>EMS</strong>
-                <span>Employee Management System</span>
+                <div className="brand-name">
+                  <strong>EMS</strong>
+                  <span>Employee Management System</span>
+                </div>
               </div>
 
               <div className="brand-divider" />
+
+              <div className="brand-badge">
+                <Sparkles size={13} />
+                SMART WORKFORCE PLATFORM
+              </div>
 
               <h2>
                 Manage your
@@ -289,8 +399,9 @@ function Login() {
               </h2>
 
               <p>
-                A secure and modern workspace to manage employees, departments,
-                roles, attendance and organizational data.
+                A secure and modern workspace designed to manage employees,
+                departments, roles and organizational data from one powerful
+                dashboard.
               </p>
 
               <div className="brand-features">
@@ -301,7 +412,7 @@ function Login() {
 
                   <div>
                     <strong>Secure Access</strong>
-                    <span>Protected admin authentication</span>
+                    <span>Protected administrator authentication</span>
                   </div>
                 </div>
 
@@ -312,7 +423,18 @@ function Login() {
 
                   <div>
                     <strong>Employee Management</strong>
-                    <span>Everything in one workspace</span>
+                    <span>Everything in one organized workspace</span>
+                  </div>
+                </div>
+
+                <div className="brand-feature">
+                  <div className="feature-icon">
+                    <KeyRound size={17} />
+                  </div>
+
+                  <div>
+                    <strong>Dynamic Security</strong>
+                    <span>Profile password changes update login</span>
                   </div>
                 </div>
               </div>
@@ -324,9 +446,9 @@ function Login() {
             </div>
           </section>
 
-          {/* =========================
-              LOGIN PANEL
-          ========================= */}
+          {/* =================================================
+              LOGIN CARD
+          ================================================= */}
 
           <section className="login-card">
             <div className="login-mobile-brand">
@@ -338,8 +460,6 @@ function Login() {
               </div>
             </div>
 
-            {/* HEADER */}
-
             <div className="login-header">
               <div className="login-icon">
                 <ShieldCheck size={22} />
@@ -350,21 +470,16 @@ function Login() {
 
                 <h1>Welcome back</h1>
 
-                <p>Sign in to access your employee management dashboard.</p>
+                <p>Sign in to continue to your dashboard.</p>
               </div>
             </div>
-
-            {/* ERROR */}
 
             {errors.login && (
               <div className="login-error">
                 <span className="error-dot" />
-
                 {errors.login}
               </div>
             )}
-
-            {/* FORM */}
 
             <form onSubmit={handleSubmit}>
               {/* USERNAME */}
@@ -383,7 +498,7 @@ function Login() {
                     id="username"
                     type="text"
                     name="username"
-                    placeholder="Enter admin username"
+                    placeholder="Enter username"
                     value={formData.username}
                     onChange={handleChange}
                     autoComplete="username"
@@ -400,7 +515,7 @@ function Login() {
                 <div className="password-label-row">
                   <label htmlFor="password">Password</label>
 
-                  <span>Protected</span>
+                  <span>SECURE</span>
                 </div>
 
                 <div
@@ -414,7 +529,7 @@ function Login() {
                     id="password"
                     type={showPassword ? "text" : "password"}
                     name="password"
-                    placeholder="Enter your password"
+                    placeholder="Enter password"
                     value={formData.password}
                     onChange={handleChange}
                     autoComplete="current-password"
@@ -424,9 +539,6 @@ function Login() {
                     type="button"
                     className="password-toggle"
                     onClick={() => setShowPassword((prev) => !prev)}
-                    aria-label={
-                      showPassword ? "Hide password" : "Show password"
-                    }
                   >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
@@ -461,8 +573,6 @@ function Login() {
                 </button>
               </div>
 
-              {/* SUBMIT */}
-
               <button
                 type="submit"
                 className="login-submit"
@@ -483,27 +593,45 @@ function Login() {
               </button>
             </form>
 
-            {/* DEMO CREDENTIAL */}
+            {/* =================================================
+                DYNAMIC ADMIN DETAILS
+            ================================================= */}
 
-            <div className="admin-hint">
-              <div className="hint-icon">
-                <ShieldCheck size={15} />
+            <div className="admin-credentials">
+              <div className="credentials-header">
+                <div className="credentials-icon">
+                  <ShieldCheck size={15} />
+                </div>
+
+                <div>
+                  <strong>Administrator Access</strong>
+                  <span>Current login credentials</span>
+                </div>
               </div>
 
-              <div>
-                <strong>Administrator access</strong>
+              <div className="credential-row">
+                <span>Username</span>
+                <b>{ADMIN_USERNAME}</b>
+              </div>
 
-                <p>
-                  Demo username: <b>admin</b>
-                </p>
+              <div className="credential-row">
+                <span>Password</span>
+                <b>{currentAdminPassword}</b>
+              </div>
+
+              <div className="credential-row">
+                <span>Email</span>
+                <b>{adminEmail}</b>
+              </div>
+
+              <div className="dynamic-note">
+                <span />
+                Password changes from Profile are reflected here automatically.
               </div>
             </div>
 
-            {/* SECURITY */}
-
             <div className="login-security">
               <ShieldCheck size={15} />
-
               <span>Secure session · Authorized personnel only</span>
             </div>
 
@@ -512,9 +640,9 @@ function Login() {
         </div>
       </main>
 
-      {/* =========================
-          SUCCESS POPUP
-      ========================= */}
+      {/* =====================================================
+          SUCCESS
+      ===================================================== */}
 
       {showSuccess && (
         <div className="login-success-overlay">
@@ -539,9 +667,9 @@ function Login() {
         </div>
       )}
 
-      {/* =========================
+      {/* =====================================================
           FORGOT PASSWORD
-      ========================= */}
+      ===================================================== */}
 
       {showForgotModal && (
         <div className="forgot-overlay" onClick={closeForgotModal}>
@@ -553,6 +681,7 @@ function Login() {
               type="button"
               className="forgot-close"
               onClick={closeForgotModal}
+              disabled={forgotLoading}
               aria-label="Close"
             >
               <X size={18} />
@@ -567,8 +696,8 @@ function Login() {
             <h2>Reset your password</h2>
 
             <p>
-              Enter your registered email address and we'll help you recover
-              access to your account.
+              Enter your registered email address. We'll verify your account and
+              send reset instructions.
             </p>
 
             <form onSubmit={handleForgotPassword}>
@@ -577,23 +706,30 @@ function Login() {
 
                 <input
                   type="email"
-                  placeholder="Enter your email"
+                  placeholder="admin@ems.com"
                   value={forgotEmail}
-                  onChange={(event) => {
-                    setForgotEmail(event.target.value);
-                    setForgotMessage("");
-                  }}
+                  onChange={(event) => setForgotEmail(event.target.value)}
                   autoFocus
+                  disabled={forgotLoading}
                 />
               </div>
 
-              {forgotMessage && (
-                <div className="forgot-message">{forgotMessage}</div>
-              )}
-
-              <button type="submit" className="forgot-submit">
-                Send reset instructions
-                <ArrowRight size={16} />
+              <button
+                type="submit"
+                className="forgot-submit"
+                disabled={forgotLoading}
+              >
+                {forgotLoading ? (
+                  <>
+                    <span className="login-spinner" />
+                    Verifying...
+                  </>
+                ) : (
+                  <>
+                    Send reset instructions
+                    <ArrowRight size={16} />
+                  </>
+                )}
               </button>
             </form>
           </div>

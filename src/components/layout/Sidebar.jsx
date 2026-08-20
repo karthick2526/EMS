@@ -38,7 +38,7 @@ const Sidebar = ({
   setIsCollapsed,
 }) => {
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
 
   // =========================================
   // DESKTOP COLLAPSE / EXPAND
@@ -67,13 +67,17 @@ const Sidebar = ({
   };
 
   // =========================================
-  // SIGN OUT
+  // LOGOUT
   // =========================================
 
-  const handleSignOut = () => {
+  const handleLogout = () => {
     logout();
+
     setSidebarOpen(false);
-    navigate("/login", { replace: true });
+
+    navigate("/login", {
+      replace: true,
+    });
   };
 
   return (
@@ -114,7 +118,7 @@ const Sidebar = ({
             <p>Employee Management</p>
           </div>
 
-          {/* Mobile Close */}
+          {/* MOBILE CLOSE */}
 
           <button
             type="button"
@@ -178,14 +182,20 @@ const Sidebar = ({
         =================================== */}
 
         <div className="sidebar-footer">
-          {/* SIGN OUT */}
+          {/* LOGOUT */}
 
-          <button type="button" className="signout-btn" onClick={handleSignOut}>
+          <button
+            type="button"
+            className="signout-btn"
+            onClick={handleLogout}
+            title="Logout"
+            aria-label="Logout"
+          >
             <span className="signout-icon">
               <LogOut size={19} />
             </span>
 
-            <span className="signout-text">Sign out</span>
+            <span className="signout-text">Logout</span>
           </button>
 
           {/* VERSION */}

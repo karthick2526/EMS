@@ -1,12 +1,15 @@
-/* =========================
+/* =========================================================
    MODAL OVERLAY
-========================= */
+========================================================= */
 
 .modal-overlay {
   position: fixed;
   inset: 0;
 
-  z-index: 1000;
+  width: 100%;
+  height: 100dvh;
+
+  z-index: 9999;
 
   display: flex;
   align-items: center;
@@ -17,24 +20,44 @@
   background: rgba(15, 15, 35, 0.55);
 
   backdrop-filter: blur(3px);
+
+  overflow: hidden;
+
+  animation: overlayOpen 0.2s ease;
 }
 
-/* =========================
+@keyframes overlayOpen {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* =========================================================
    MODAL
-========================= */
+========================================================= */
 
 .employee-modal {
+  position: relative;
+
   width: 100%;
   max-width: 720px;
 
-  max-height: 90vh;
-  overflow-y: auto;
+  max-height: calc(100dvh - 40px);
 
-  background: var(--card);
+  display: flex;
+  flex-direction: column;
 
-  border-radius: var(--radius-lg);
+  background: var(--card, #ffffff);
 
-  box-shadow: 0 20px 60px rgba(15, 15, 35, 0.2);
+  border-radius: var(--radius-lg, 16px);
+
+  box-shadow: 0 20px 60px rgba(15, 15, 35, 0.25);
+
+  overflow: hidden;
 
   animation: modalOpen 0.2s ease;
 }
@@ -42,7 +65,7 @@
 @keyframes modalOpen {
   from {
     opacity: 0;
-    transform: translateY(10px) scale(0.98);
+    transform: translateY(12px) scale(0.98);
   }
 
   to {
@@ -51,36 +74,58 @@
   }
 }
 
-/* =========================
+/* =========================================================
    MODAL HEADER
-========================= */
+========================================================= */
 
 .modal-header {
-  padding: 23px 25px;
+  flex-shrink: 0;
+
+  min-height: 82px;
+
+  padding: 20px 24px;
 
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
 
-  border-bottom: 1px solid var(--border);
+  gap: 20px;
+
+  border-bottom: 1px solid var(--border, #e8e8f0);
+
+  background: var(--card, #ffffff);
+}
+
+.modal-title-area {
+  min-width: 0;
 }
 
 .modal-header h2 {
+  margin: 0 0 5px;
+
+  color: var(--text-primary, #18181b);
+
   font-size: 19px;
   font-weight: 700;
-
-  margin-bottom: 5px;
-
-  color: var(--text-primary);
 }
 
 .modal-header p {
-  color: var(--text-muted);
+  margin: 0;
+
+  color: var(--text-muted, #9494a6);
 
   font-size: 12px;
 }
 
+/* =========================================================
+   CLOSE BUTTON
+========================================================= */
+
 .modal-close-btn {
+  position: relative;
+
+  flex-shrink: 0;
+
   width: 36px;
   height: 36px;
 
@@ -88,40 +133,92 @@
   align-items: center;
   justify-content: center;
 
-  border: none;
-  border-radius: 8px;
+  padding: 0;
 
-  background: #f5f5fa;
+  border: 1px solid #e7e7ef;
 
-  color: var(--text-secondary);
+  border-radius: 9px;
+
+  background: #f7f7fb;
+
+  color: var(--text-secondary, #64748b);
 
   cursor: pointer;
 
-  transition: 0.2s ease;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
 }
 
 .modal-close-btn:hover {
-  background: #ffeded;
-  color: var(--danger);
+  background: #fff0f0;
+
+  border-color: #fecaca;
+
+  color: #dc2626;
+
+  transform: scale(1.04);
 }
 
-/* =========================
-   FORM
-========================= */
+.modal-close-btn:active {
+  transform: scale(0.94);
+}
+
+.modal-close-btn:disabled {
+  opacity: 0.5;
+
+  cursor: not-allowed;
+
+  transform: none;
+}
+
+/* =========================================================
+   FORM AREA
+========================================================= */
 
 .employee-form {
-  padding: 25px;
+  padding: 24px;
+
+  overflow-y: auto;
+
+  overscroll-behavior: contain;
+
+  scrollbar-width: thin;
+
+  scrollbar-color: #d5d5df transparent;
 }
+
+.employee-form::-webkit-scrollbar {
+  width: 6px;
+}
+
+.employee-form::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.employee-form::-webkit-scrollbar-thumb {
+  background: #d5d5df;
+
+  border-radius: 20px;
+}
+
+/* =========================================================
+   FORM GRID
+========================================================= */
 
 .form-grid {
   display: grid;
 
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 
   gap: 20px;
 }
 
 .form-field {
+  min-width: 0;
+
   display: flex;
   flex-direction: column;
 
@@ -133,12 +230,16 @@
 
   font-weight: 600;
 
-  color: var(--text-primary);
+  color: var(--text-primary, #18181b);
 }
 
 .form-field label span {
-  color: var(--danger);
+  color: var(--danger, #dc2626);
 }
+
+/* =========================================================
+   INPUT / SELECT
+========================================================= */
 
 .form-field input,
 .form-field select {
@@ -147,16 +248,22 @@
 
   padding: 0 12px;
 
-  border: 1px solid var(--border);
+  border: 1px solid var(--border, #e7e7ef);
+
   border-radius: 8px;
 
-  background: white;
+  outline: none;
 
-  color: var(--text-primary);
+  background: #ffffff;
+
+  color: var(--text-primary, #18181b);
 
   font-size: 12px;
 
-  transition: 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
 }
 
 .form-field input::placeholder {
@@ -165,9 +272,9 @@
 
 .form-field input:focus,
 .form-field select:focus {
-  border-color: var(--primary);
+  border-color: var(--primary, #635bff);
 
-  box-shadow: 0 0 0 3px var(--primary-light);
+  box-shadow: 0 0 0 3px var(--primary-light, #f0efff);
 }
 
 .form-field select {
@@ -178,17 +285,21 @@
   cursor: pointer;
 }
 
+/* =========================================================
+   ERROR
+========================================================= */
+
 .form-error {
-  color: var(--danger);
+  color: var(--danger, #dc2626);
 
   font-size: 10px;
 
   font-weight: 500;
 }
 
-/* =========================
+/* =========================================================
    SUBMIT ERROR
-========================= */
+========================================================= */
 
 .submit-error {
   margin-top: 20px;
@@ -208,16 +319,16 @@
   font-weight: 500;
 }
 
-/* =========================
+/* =========================================================
    MODAL FOOTER
-========================= */
+========================================================= */
 
 .modal-footer {
-  margin-top: 25px;
+  margin-top: 24px;
 
   padding-top: 20px;
 
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--border, #e8e8f0);
 
   display: flex;
 
@@ -225,6 +336,10 @@
 
   gap: 10px;
 }
+
+/* =========================================================
+   BUTTONS
+========================================================= */
 
 .cancel-btn,
 .save-employee-btn {
@@ -240,35 +355,40 @@
 
   cursor: pointer;
 
-  transition: 0.2s ease;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease,
+    opacity 0.2s ease;
 }
 
 .cancel-btn {
-  border: 1px solid var(--border);
+  border: 1px solid var(--border, #e7e7ef);
 
-  background: white;
+  background: #ffffff;
 
-  color: var(--text-secondary);
+  color: var(--text-secondary, #64748b);
 }
 
 .cancel-btn:hover {
   background: #f7f7fb;
 
-  color: var(--text-primary);
+  color: var(--text-primary, #18181b);
 }
 
 .save-employee-btn {
   border: none;
 
-  background: var(--primary);
+  background: var(--primary, #635bff);
 
-  color: white;
+  color: #ffffff;
 
   box-shadow: 0 4px 12px rgba(99, 91, 255, 0.2);
 }
 
 .save-employee-btn:hover {
-  background: var(--primary-dark);
+  background: var(--primary-dark, #5148e5);
 
   transform: translateY(-1px);
 }
@@ -282,22 +402,23 @@
   transform: none;
 }
 
-/* =========================
+/* =========================================================
    DISABLED EMPLOYEE ID
-========================= */
+========================================================= */
 
 .disabled-input {
   background: #f3f4f8 !important;
-  color: var(--text-secondary) !important;
+
+  color: var(--text-secondary, #64748b) !important;
 
   cursor: not-allowed !important;
 
-  border-color: var(--border) !important;
+  border-color: var(--border, #e7e7ef) !important;
 }
 
-/* =========================
+/* =========================================================
    EMAIL INPUT
-========================= */
+========================================================= */
 
 .email-input-wrapper {
   display: flex;
@@ -305,21 +426,23 @@
 
   height: 44px;
 
-  border: 1px solid var(--border);
+  border: 1px solid var(--border, #e7e7ef);
 
   border-radius: 8px;
 
-  background: white;
+  background: #ffffff;
 
   overflow: hidden;
 
-  transition: 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .email-input-wrapper:focus-within {
-  border-color: var(--primary);
+  border-color: var(--primary, #635bff);
 
-  box-shadow: 0 0 0 3px var(--primary-light);
+  box-shadow: 0 0 0 3px var(--primary-light, #f0efff);
 }
 
 .email-input-wrapper input {
@@ -327,40 +450,42 @@
 
   height: 100%;
 
+  min-width: 0;
+
   border: none !important;
 
   box-shadow: none !important;
 
   border-radius: 0;
-
-  min-width: 0;
 }
 
 .email-input-wrapper span {
+  flex-shrink: 0;
+
   padding-right: 12px;
 
-  color: var(--text-muted);
+  color: var(--text-muted, #9494a6);
 
   font-size: 12px;
 
   white-space: nowrap;
 }
 
-/* =========================
+/* =========================================================
    DISABLED POSITION
-========================= */
+========================================================= */
 
 .form-field select:disabled {
   background: #f3f4f8;
 
-  color: var(--text-muted);
+  color: var(--text-muted, #9494a6);
 
   cursor: not-allowed;
 }
 
-/* =========================
+/* =========================================================
    MOBILE
-========================= */
+========================================================= */
 
 @media (max-width: 650px) {
   .modal-overlay {
@@ -368,18 +493,38 @@
   }
 
   .employee-modal {
-    max-height: 95vh;
+    max-height: calc(100dvh - 20px);
+
+    border-radius: 14px;
+  }
+
+  .modal-header {
+    min-height: 74px;
+
+    padding: 17px 18px;
+  }
+
+  .modal-header h2 {
+    font-size: 17px;
+  }
+
+  .modal-header p {
+    font-size: 11px;
+  }
+
+  .modal-close-btn {
+    width: 34px;
+    height: 34px;
+  }
+
+  .employee-form {
+    padding: 18px;
   }
 
   .form-grid {
     grid-template-columns: 1fr;
 
     gap: 16px;
-  }
-
-  .modal-header,
-  .employee-form {
-    padding: 20px;
   }
 
   .modal-footer {
@@ -389,5 +534,45 @@
   .cancel-btn,
   .save-employee-btn {
     width: 100%;
+  }
+}
+
+/* =========================================================
+   VERY SMALL MOBILE
+========================================================= */
+
+@media (max-width: 400px) {
+  .modal-overlay {
+    padding: 6px;
+  }
+
+  .employee-modal {
+    max-height: calc(100dvh - 12px);
+
+    border-radius: 12px;
+  }
+
+  .modal-header {
+    padding: 15px;
+  }
+
+  .employee-form {
+    padding: 15px;
+  }
+}
+
+/* =========================================================
+   REDUCE MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .modal-overlay,
+  .employee-modal,
+  .modal-close-btn,
+  .cancel-btn,
+  .save-employee-btn {
+    animation: none;
+
+    transition: none;
   }
 }
