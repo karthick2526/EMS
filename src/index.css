@@ -1,0 +1,130 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+:root {
+  --primary: #635bff;
+  --primary-dark: #5148e5;
+  --primary-light: #eeecff;
+
+  --accent: #06b6d4;
+  --success: #16a34a;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+
+  --sidebar: #15152a;
+  --sidebar-light: #22223d;
+
+  --background: #f6f7fb;
+  --card: #ffffff;
+
+  --text-primary: #17172f;
+  --text-secondary: #62627a;
+  --text-muted: #9292a7;
+
+  --border: #e6e7ef;
+
+  --shadow-sm: 0 2px 8px rgba(25, 25, 60, 0.05);
+  --shadow-md: 0 8px 24px rgba(25, 25, 60, 0.08);
+
+  --radius-sm: 7px;
+  --radius-md: 11px;
+  --radius-lg: 15px;
+}
+
+/* =========================
+   RESET
+========================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  background: var(--background);
+  color: var(--text-primary);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* =========================
+   FORM ELEMENTS
+========================= */
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+input,
+select,
+textarea {
+  outline: none;
+}
+
+/* =========================
+   CLICKABLE ELEMENTS
+========================= */
+
+button,
+select,
+a,
+[role="button"] {
+  cursor: pointer;
+}
+
+/* Dropdown + options */
+
+select {
+  cursor: pointer;
+}
+
+select option {
+  cursor: pointer;
+}
+
+/* Text fields */
+
+input,
+textarea {
+  cursor: text;
+}
+
+/* Checkbox + Radio */
+
+input[type="checkbox"],
+input[type="radio"] {
+  cursor: pointer;
+}
+
+/* =========================
+   LINKS
+========================= */
+
+a {
+  text-decoration: none;
+}
+
+/* =========================
+   TEXT SELECTION
+========================= */
+
+::selection {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+}
+
+/* =========================
+   ROOT
+========================= */
+
+#root {
+  min-height: 100vh;
+}

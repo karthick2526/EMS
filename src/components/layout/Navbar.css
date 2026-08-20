@@ -1,0 +1,757 @@
+/* =========================================================
+   NAVBAR
+========================================================= */
+
+.navbar {
+  height: 82px;
+
+  padding: 0 30px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  background: var(--card, #ffffff);
+
+  border-bottom: 1px solid var(--border, #e8e8f0);
+
+  position: sticky;
+
+  top: 0;
+
+  z-index: 50;
+
+  transition:
+    background 0.3s ease,
+    border-color 0.3s ease,
+    padding 0.3s ease;
+}
+
+/* =========================================================
+   LEFT
+========================================================= */
+
+.navbar-left {
+  min-width: 0;
+
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+}
+
+/* =========================================================
+   MOBILE MENU
+========================================================= */
+
+.navbar-menu-btn {
+  display: none;
+
+  width: 40px;
+  height: 40px;
+
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border: 1px solid var(--border, #e5e7eb);
+
+  border-radius: 11px;
+
+  background: var(--card, #fff);
+
+  color: var(--text-secondary, #64748b);
+
+  cursor: pointer;
+
+  transition:
+    color 0.25s ease,
+    background 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.navbar-menu-btn:hover {
+  color: var(--primary, #635bff);
+
+  background: var(--primary-light, #f0efff);
+
+  border-color: rgba(99, 91, 255, 0.2);
+
+  transform: translateY(-1px);
+
+  box-shadow: 0 6px 15px rgba(99, 91, 255, 0.1);
+}
+
+.navbar-menu-btn:active {
+  transform: scale(0.94);
+}
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+.navbar-search {
+  width: 335px;
+  height: 44px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 0 13px;
+
+  background: #f8f8fc;
+
+  border: 1px solid var(--border, #e7e7ef);
+
+  border-radius: 11px;
+
+  color: #9494a6;
+
+  transition:
+    width 0.35s ease,
+    background 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.navbar-search:hover {
+  border-color: #dcdce8;
+}
+
+.navbar-search:focus-within {
+  width: 370px;
+
+  background: #fff;
+
+  border-color: var(--primary, #635bff);
+
+  box-shadow: 0 0 0 4px rgba(99, 91, 255, 0.08);
+}
+
+.search-icon {
+  flex-shrink: 0;
+
+  transition:
+    color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.navbar-search:focus-within .search-icon {
+  color: var(--primary, #635bff);
+
+  transform: scale(1.08);
+}
+
+.navbar-search input {
+  width: 100%;
+  min-width: 0;
+
+  border: none;
+  outline: none;
+
+  background: transparent;
+
+  color: var(--text-primary, #18181b);
+
+  font-size: 12px;
+}
+
+.navbar-search input::placeholder {
+  color: #a0a0b1;
+}
+
+/* =========================================================
+   SEARCH SHORTCUT
+========================================================= */
+
+.search-shortcut {
+  flex-shrink: 0;
+
+  padding: 4px 6px;
+
+  border: 1px solid #e4e4eb;
+
+  border-radius: 5px;
+
+  color: #a2a2b0;
+
+  background: #fff;
+
+  font-size: 8px;
+
+  font-weight: 600;
+
+  letter-spacing: 0.2px;
+}
+
+/* =========================================================
+   RIGHT
+========================================================= */
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+
+  gap: 17px;
+
+  flex-shrink: 0;
+}
+
+/* =========================================================
+   SYSTEM STATUS
+========================================================= */
+
+.navbar-status {
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+
+  color: #7b7b8d;
+
+  font-size: 9px;
+
+  font-weight: 600;
+
+  white-space: nowrap;
+}
+
+.navbar-status-dot {
+  width: 6px;
+  height: 6px;
+
+  border-radius: 50%;
+
+  background: #22c55e;
+
+  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.08);
+
+  animation: navbarLive 2s infinite;
+}
+
+@keyframes navbarLive {
+  0%,
+  100% {
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.07);
+  }
+
+  50% {
+    box-shadow: 0 0 0 6px rgba(34, 197, 94, 0);
+  }
+}
+
+/* =========================================================
+   NOTIFICATION
+========================================================= */
+
+.notification-btn {
+  position: relative;
+
+  width: 40px;
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid transparent;
+
+  border-radius: 10px;
+
+  background: transparent;
+
+  color: var(--text-secondary, #64748b);
+
+  cursor: pointer;
+
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    transform 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.notification-btn:hover {
+  color: var(--primary, #635bff);
+
+  background: var(--primary-light, #f3f2ff);
+
+  border-color: rgba(99, 91, 255, 0.08);
+
+  transform: translateY(-2px);
+}
+
+.notification-btn:active {
+  transform: scale(0.94);
+}
+
+.notification-dot {
+  position: absolute;
+
+  width: 7px;
+  height: 7px;
+
+  top: 7px;
+  right: 7px;
+
+  background: #ef4444;
+
+  border: 2px solid var(--card, #fff);
+
+  border-radius: 50%;
+
+  animation: notificationPulse 2s infinite;
+}
+
+@keyframes notificationPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.25);
+  }
+
+  50% {
+    box-shadow: 0 0 0 5px rgba(239, 68, 68, 0);
+  }
+}
+
+/* =========================================================
+   DIVIDER
+========================================================= */
+
+.navbar-divider {
+  width: 1px;
+  height: 28px;
+
+  background: var(--border, #e8e8f0);
+}
+
+/* =========================================================
+   PROFILE
+========================================================= */
+
+.navbar-profile {
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+
+  padding: 4px 5px;
+
+  border: none;
+
+  background: transparent;
+
+  border-radius: 10px;
+
+  cursor: pointer;
+
+  transition: background 0.25s ease;
+}
+
+.navbar-profile:hover {
+  background: #f7f7fb;
+}
+
+/* =========================================================
+   AVATAR
+========================================================= */
+
+.navbar-avatar {
+  width: 38px;
+  height: 38px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  color: #fff;
+
+  background: linear-gradient(135deg, #635bff, #8b5cf6);
+
+  border-radius: 11px;
+
+  font-size: 12px;
+
+  font-weight: 750;
+
+  box-shadow: 0 5px 14px rgba(99, 91, 255, 0.18);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.navbar-profile:hover .navbar-avatar {
+  transform: translateY(-1px) scale(1.03);
+
+  box-shadow: 0 8px 18px rgba(99, 91, 255, 0.25);
+}
+
+/* =========================================================
+   USER INFO
+========================================================= */
+
+.navbar-user-info {
+  display: flex;
+  flex-direction: column;
+
+  align-items: flex-start;
+
+  gap: 2px;
+}
+
+.navbar-user-info strong {
+  max-width: 120px;
+
+  overflow: hidden;
+
+  color: var(--text-primary, #18181b);
+
+  font-size: 11px;
+
+  font-weight: 650;
+
+  white-space: nowrap;
+
+  text-overflow: ellipsis;
+}
+
+.navbar-user-info small {
+  color: var(--text-muted, #9494a6);
+
+  font-size: 8px;
+
+  white-space: nowrap;
+}
+
+.profile-chevron {
+  color: #9b9baa;
+
+  transition: transform 0.25s ease;
+}
+
+.navbar-profile:hover .profile-chevron {
+  transform: translateY(2px);
+}
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+.navbar-logout {
+  height: 38px;
+
+  display: inline-flex;
+  align-items: center;
+
+  gap: 7px;
+
+  padding: 0 11px;
+
+  border: 1px solid #e6e6ed;
+
+  border-radius: 9px;
+
+  background: transparent;
+
+  color: #747486;
+
+  font-size: 10px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    color 0.25s ease,
+    background 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.navbar-logout:hover {
+  color: #dc2626;
+
+  background: #fff5f5;
+
+  border-color: #fecaca;
+
+  transform: translateY(-1px);
+}
+
+.navbar-logout:active {
+  transform: scale(0.97);
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1100px) {
+  .navbar {
+    padding: 0 24px;
+  }
+
+  .navbar-search {
+    width: 270px;
+  }
+
+  .navbar-search:focus-within {
+    width: 300px;
+  }
+
+  .navbar-status {
+    display: none;
+  }
+
+  .navbar-right {
+    gap: 12px;
+  }
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 800px) {
+  .navbar {
+    height: 74px;
+
+    padding: 0 18px;
+  }
+
+  .navbar-menu-btn {
+    display: flex;
+  }
+
+  .navbar-left {
+    flex: 1;
+
+    min-width: 0;
+
+    gap: 10px;
+  }
+
+  .navbar-search {
+    width: 230px;
+    height: 42px;
+  }
+
+  .navbar-search:focus-within {
+    width: 250px;
+  }
+
+  .navbar-right {
+    gap: 7px;
+  }
+
+  .navbar-user-info,
+  .profile-chevron {
+    display: none;
+  }
+
+  .navbar-profile {
+    padding: 0;
+  }
+
+  .navbar-avatar {
+    width: 38px;
+    height: 38px;
+  }
+
+  .navbar-logout span {
+    display: none;
+  }
+
+  .navbar-logout {
+    width: 38px;
+
+    justify-content: center;
+
+    padding: 0;
+  }
+}
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+  .navbar {
+    height: 70px;
+
+    padding: 0 14px;
+  }
+
+  .navbar-menu-btn {
+    width: 39px;
+    height: 39px;
+  }
+
+  .navbar-left {
+    gap: 8px;
+  }
+
+  .navbar-search {
+    width: 180px;
+    height: 40px;
+
+    padding: 0 11px;
+  }
+
+  .search-shortcut {
+    display: none;
+  }
+
+  .navbar-right {
+    gap: 5px;
+  }
+
+  .notification-btn {
+    width: 37px;
+    height: 37px;
+  }
+
+  .navbar-avatar {
+    width: 37px;
+    height: 37px;
+  }
+
+  .navbar-logout {
+    width: 37px;
+    height: 37px;
+  }
+}
+
+/* =========================================================
+   VERY SMALL MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+  .navbar {
+    padding: 0 11px;
+  }
+
+  .navbar-left {
+    gap: 6px;
+  }
+
+  .navbar-menu-btn {
+    width: 37px;
+    height: 37px;
+  }
+
+  .navbar-search {
+    width: 38px;
+    height: 37px;
+
+    padding: 0;
+
+    justify-content: center;
+
+    cursor: text;
+  }
+
+  .navbar-search input {
+    display: none;
+  }
+
+  .navbar-search:focus-within {
+    width: 120px;
+
+    padding: 0 9px;
+
+    justify-content: flex-start;
+  }
+
+  .navbar-search:focus-within input {
+    display: block;
+  }
+
+  .navbar-search:focus-within .search-icon {
+    flex-shrink: 0;
+  }
+
+  .notification-btn {
+    width: 35px;
+    height: 35px;
+  }
+
+  .navbar-avatar {
+    width: 35px;
+    height: 35px;
+  }
+
+  .navbar-logout {
+    width: 35px;
+    height: 35px;
+  }
+
+  .navbar-divider {
+    display: none;
+  }
+}
+
+/* =========================================================
+   EXTRA SMALL
+========================================================= */
+
+@media (max-width: 360px) {
+  .navbar {
+    padding: 0 8px;
+  }
+
+  .navbar-menu-btn {
+    width: 35px;
+    height: 35px;
+  }
+
+  .navbar-search {
+    width: 35px;
+    height: 35px;
+  }
+
+  .navbar-search:focus-within {
+    width: 105px;
+  }
+
+  .notification-btn {
+    width: 33px;
+    height: 33px;
+  }
+
+  .navbar-avatar {
+    width: 33px;
+    height: 33px;
+  }
+
+  .navbar-logout {
+    width: 33px;
+    height: 33px;
+  }
+}
+
+/* =========================================================
+   REDUCE MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .navbar,
+  .navbar-search,
+  .navbar-menu-btn,
+  .notification-btn,
+  .navbar-profile,
+  .navbar-avatar,
+  .navbar-logout,
+  .profile-chevron {
+    transition: none;
+    animation: none;
+  }
+}

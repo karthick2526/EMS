@@ -1,0 +1,176 @@
+/* =========================================================
+   APP LAYOUT
+========================================================= */
+
+.app-layout {
+  width: 100%;
+
+  min-height: 100vh;
+
+  display: flex;
+
+  background: var(--background, #f7f7fb);
+
+  transition: background 0.3s ease;
+}
+
+/* =========================================================
+   MAIN WRAPPER
+========================================================= */
+
+.main-wrapper {
+  flex: 1;
+
+  min-width: 0;
+
+  min-height: 100vh;
+
+  display: flex;
+
+  flex-direction: column;
+
+  /*
+    Expanded sidebar
+  */
+
+  margin-left: 260px;
+
+  transition: margin-left 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* =========================================================
+   COLLAPSED
+   Sidebar = 72px
+========================================================= */
+
+.app-layout.layout-collapsed .main-wrapper {
+  margin-left: 72px;
+}
+
+/* =========================================================
+   EXPANDED
+   Sidebar = 260px
+========================================================= */
+
+.app-layout.layout-expanded .main-wrapper {
+  margin-left: 260px;
+}
+
+/* =========================================================
+   MAIN CONTENT
+========================================================= */
+
+.main-content {
+  flex: 1;
+
+  min-height: calc(100vh - 82px);
+
+  padding: 30px;
+
+  overflow-x: hidden;
+
+  animation: pageEnter 0.45s ease both;
+}
+
+/* =========================================================
+   PAGE ENTER
+========================================================= */
+
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+
+    transform: translateY(5px);
+  }
+
+  to {
+    opacity: 1;
+
+    transform: translateY(0);
+  }
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1000px) {
+  /*
+    Expanded
+  */
+
+  .app-layout.layout-expanded .main-wrapper {
+    margin-left: 260px;
+  }
+
+  /*
+    Collapsed
+  */
+
+  .app-layout.layout-collapsed .main-wrapper {
+    margin-left: 72px;
+  }
+
+  .main-content {
+    padding: 26px 24px;
+  }
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 800px) {
+  /*
+    Mobile-ல் sidebar fixed overlay.
+    Main content full width.
+  */
+
+  .main-wrapper,
+  .app-layout.layout-collapsed .main-wrapper,
+  .app-layout.layout-expanded .main-wrapper {
+    margin-left: 0;
+  }
+
+  .main-content {
+    min-height: calc(100vh - 74px);
+
+    padding: 25px 22px;
+  }
+}
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+  .main-content {
+    min-height: calc(100vh - 70px);
+
+    padding: 20px 15px;
+  }
+}
+
+/* =========================================================
+   VERY SMALL MOBILE
+========================================================= */
+
+@media (max-width: 400px) {
+  .main-content {
+    padding: 17px 11px;
+  }
+}
+
+/* =========================================================
+   REDUCE MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .main-content {
+    animation: none;
+  }
+
+  .main-wrapper {
+    transition: none;
+  }
+}

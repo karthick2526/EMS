@@ -1,0 +1,365 @@
+/* =========================
+   OVERLAY
+========================= */
+
+.delete-employee-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1800;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  background: rgba(21, 21, 42, 0.58);
+  backdrop-filter: blur(5px);
+
+  animation: deleteOverlayIn 0.2s ease;
+}
+
+/* =========================
+   MODAL
+========================= */
+
+.delete-employee-modal {
+  position: relative;
+
+  width: 100%;
+  max-width: 430px;
+
+  padding: 30px;
+
+  background: var(--card);
+
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+
+  box-shadow: 0 24px 70px rgba(25, 25, 60, 0.2);
+
+  animation: deleteModalIn 0.25s ease;
+}
+
+/* =========================
+   CLOSE BUTTON
+========================= */
+
+.delete-close-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid var(--border);
+  border-radius: 8px;
+
+  background: var(--card);
+  color: var(--text-secondary);
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.delete-close-btn:hover:not(:disabled) {
+  background: var(--background);
+  color: var(--text-primary);
+  border-color: var(--primary);
+}
+
+.delete-close-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* =========================
+   WARNING ICON
+========================= */
+
+.delete-warning-icon {
+  width: 54px;
+  height: 54px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 18px;
+
+  border-radius: 50%;
+
+  background: #fee2e2;
+  color: var(--danger);
+}
+
+/* =========================
+   CONTENT
+========================= */
+
+.delete-employee-content h2 {
+  margin: 0;
+
+  color: var(--text-primary);
+
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.delete-employee-content > p {
+  margin: 8px 0 18px;
+
+  color: var(--text-secondary);
+
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.delete-employee-content > p strong {
+  color: var(--text-primary);
+}
+
+/* =========================
+   EMPLOYEE INFO
+========================= */
+
+.delete-employee-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 12px 14px;
+
+  background: var(--background);
+
+  border: 1px solid var(--border);
+  border-radius: 9px;
+}
+
+.delete-employee-info span {
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.delete-employee-info strong {
+  color: var(--text-primary);
+  font-size: 12px;
+}
+
+/* =========================
+   WARNING MESSAGE
+========================= */
+
+.delete-warning-message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  margin-top: 12px;
+  padding: 11px 12px;
+
+  background: #fff7ed;
+
+  border: 1px solid #fed7aa;
+  border-radius: 8px;
+
+  color: #c2410c;
+
+  font-size: 11px;
+  font-weight: 500;
+}
+
+/* =========================
+   API ERROR
+========================= */
+
+.delete-api-error {
+  margin-top: 12px;
+  padding: 10px 12px;
+
+  background: #fef2f2;
+
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+
+  color: var(--danger);
+
+  font-size: 11px;
+  font-weight: 500;
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+.delete-employee-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+
+  gap: 10px;
+
+  margin-top: 24px;
+  padding-top: 18px;
+
+  border-top: 1px solid var(--border);
+}
+
+/* =========================
+   BUTTONS
+========================= */
+
+.delete-cancel-btn,
+.delete-confirm-btn {
+  min-height: 42px;
+
+  padding: 0 17px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  border-radius: 8px;
+
+  font-family: inherit;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+/* =========================
+   CANCEL
+========================= */
+
+.delete-cancel-btn {
+  border: 1px solid var(--border);
+
+  background: var(--card);
+  color: var(--text-secondary);
+}
+
+.delete-cancel-btn:hover:not(:disabled) {
+  background: var(--background);
+
+  color: var(--text-primary);
+
+  border-color: #cfd0dc;
+}
+
+/* =========================
+   DELETE
+========================= */
+
+.delete-confirm-btn {
+  border: 1px solid var(--danger);
+
+  background: var(--danger);
+  color: #ffffff;
+
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+}
+
+.delete-confirm-btn:hover:not(:disabled) {
+  background: #dc2626;
+
+  border-color: #dc2626;
+
+  transform: translateY(-1px);
+}
+
+.delete-confirm-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* =========================
+   DISABLED
+========================= */
+
+.delete-cancel-btn:disabled,
+.delete-confirm-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+/* =========================
+   SPINNER
+========================= */
+
+.delete-spinner {
+  width: 14px;
+  height: 14px;
+
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #ffffff;
+
+  border-radius: 50%;
+
+  animation: deleteSpinner 0.7s linear infinite;
+}
+
+/* =========================
+   ANIMATIONS
+========================= */
+
+@keyframes deleteOverlayIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes deleteModalIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes deleteSpinner {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 480px) {
+  .delete-employee-overlay {
+    padding: 14px;
+  }
+
+  .delete-employee-modal {
+    padding: 24px 20px;
+    border-radius: 12px;
+  }
+
+  .delete-employee-footer {
+    flex-direction: column-reverse;
+  }
+
+  .delete-cancel-btn,
+  .delete-confirm-btn {
+    width: 100%;
+  }
+}
